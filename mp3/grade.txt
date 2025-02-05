@@ -1,0 +1,7 @@
+readme: 5
+comment: 5
+fp ops: 2.5
+compile no warn: 2.5
+read/write: 5
+char dev: 0
+buffer alloc/free: 10

@@ -1,0 +1,9 @@
+## Case Study 1:
+There is almost no Major Page Fault in both experiment. There is enough physical memoery for case study 1. For minor page fault, there are some idle increment where minor page fault isn't increasing. This is because the in work implementation, sleep function pauses the work function implementation and the length of the idle interval depends on how the hardware works. 
+
+For work process 1 and 2, the overall minor page fault number is greater than that for work processor 3 and 4. This is due to the variable locality. In case 1, work processes 1 and 2 use random access for memory while P3 is Random Locality Access and P4 uses Locality-based Access. rand_access() would jump to random pages for memory access, taking more risks to access unmapped page. However, local_access() would access memory close to addresses that were previously address, which are usualy in the same page or the nearby pages, which means it has the lower possibility to cause the minor page fault. Therefore, processes 3 and 4 have less amount of minor page fault.
+
+## Case Study 2:
+The plot indicates the average utilization of N work processes (sum of CPU utilization)/(time interval in jiffies). When N is small, CPU utilization is small since we don't need to use all processes and memory for implementation. Few processes are running and the system doesn't fully utilize the available CPU and memoery. 
+As N increases until N=16, CPU utilization also increases due to the increasing requirement for processes and memory. As N=16, CPU utilization goes to the peak since we maximize the utilization of processes and memory. 
+After N=16, CPU utilization decreases due to the excessive memory and processes required. More processors require the resources and they have to wait for accessing the limited CPU and memory resources, lowering the inefficiency. 
