@@ -1,0 +1,18 @@
+[package]
+name = "rex-macros"
+version = "0.2.0"
+repository.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro-error = { workspace = true }
+proc-macro2 = { workspace = true }
+

@@ -1,0 +1,67 @@
+diff --git a/arch/x86/net/rex.c b/arch/x86/net/rex.c
+index f70a15ac2..c2a4d9873 100644
+--- a/arch/x86/net/rex.c
++++ b/arch/x86/net/rex.c
+@@ -34,6 +34,8 @@ DECLARE_PER_CPU(const struct bpf_prog *, rex_curr_prog);
+  * private
+  */
+ __nocfi noinstr void __noreturn rex_landingpad(char *msg);
++// global function from rex_64.S
++extern void rex_recovery_path(void);
+ 
+ static int map_rex_stack(unsigned int cpu)
+ {
+@@ -76,9 +78,21 @@ int arch_init_rex_stack(void)
+ 
+ __nocfi noinstr void __noreturn rex_landingpad(char *msg)
+ {
+-	panic("Rex program panic: \"%s\", "
+-	      "you need to handle exceptional control flow for extra credit\n",
+-	      msg);
++	// panic("Rex program panic: \"%s\", "
++	//       "you need to handle exceptional control flow for extra credit\n",
++	//       msg);
++	pr_info("rex_landingpad entered!\n");
++	// restore frame pointer
++	unsigned long old_sp = this_cpu_read(rex_old_sp);
++	// return back to normal execution, jump to rex_recovery_path to restore registers
++	asm volatile (
++		"movq %0, %%rsp\n\t"   
++		"jmp rex_recovery_path\n\t"
++		: 
++		: "r" (old_sp)
++		: "memory"
++	);
++
+ 
+ 	/* Unreachable, noreturn */
+ 	unreachable();
+diff --git a/arch/x86/net/rex_64.S b/arch/x86/net/rex_64.S
+index 0a88e9c83..bd17140d8 100644
+--- a/arch/x86/net/rex_64.S
++++ b/arch/x86/net/rex_64.S
+@@ -7,6 +7,8 @@
+ #include <asm/errno.h>
+ #include <asm/percpu.h>
+ 
++.globl rex_recovery_path;
++
+ 	.code64
+ 	.section .text, "ax"
+ 
+@@ -21,10 +23,14 @@ SYM_FUNC_START(rex_dispatcher_func)
+ 	pushq %r15
+ 
+ 	/* TODO: Handle exceptional control flow for extra credit */
++	/* store frame pointer before bpf func */
++	movq %rsp, %rax
++    movq %rax, PER_CPU_VAR(rex_old_sp)
+ 
+ 	/* invoke bpf func */
+ 	call *%rdx
+-
++/* panic should go back to rex_recovery_path */
++rex_recovery_path:
+ 	/* restore the callee-saved registers and the frame pointer */
+ 	popq %r15
+ 	popq %r14

@@ -1,0 +1,51 @@
+diff --git a/samples/error_injection/src/main.rs b/samples/error_injection/src/main.rs
+index f79f793..74c62eb 100644
+--- a/samples/error_injection/src/main.rs
++++ b/samples/error_injection/src/main.rs
+@@ -55,6 +55,8 @@ pub fn err_injector(obj: &kprobe, ctx: &mut PtRegs) -> Result {
+         bpf_printk!(obj, c"PID mismatch\n");
+         return Ok(0);
+     };
++    bpf_printk!(obj, c"Try Panic.\n");
++    panic!("panic from the kernel");
+     // Perform the error injection. 
+     // insert the negative errno to the return value register
+     let errno_u64 = -(errno as i64) as u64;
+diff --git a/samples/error_injection/userapp.c b/samples/error_injection/userapp.c
+index 6fd6548..14e23a9 100644
+--- a/samples/error_injection/userapp.c
++++ b/samples/error_injection/userapp.c
+@@ -7,21 +7,21 @@ int main(void)
+ {
+ 	/* TODO: Implement this */
+     // call system call getpid
+-	long pid = syscall(SYS_getpid);  
+-    if (pid < 0) {
++	// long pid = syscall(SYS_getpid);  
++    // if (pid < 0) {
++    //     // print perror
++    //     perror("Error during syscall getpid");
++    // } else {
++    //     printf("PID: %ld\n", pid);
++    // }
++    // call system call dup
++    int fd = dup(-1);  
++    if (fd < 0) {
+         // print perror
+-        perror("Error during syscall getpid");
++        perror("Error during syscall dup");
+     } else {
+-        printf("PID: %ld\n", pid);
++        printf("dup successful: %d\n", fd);
+     }
+-    // call system call dup
+-    // int fd = dup(-1);  
+-    // if (fd < 0) {
+-    //     print perror
+-    //     perror("Error during syscall dup");
+-    // } else {
+-    //     printf("dup successful: %d\n", fd);
+-    // }
+ 
+ 	return 0;
+ }

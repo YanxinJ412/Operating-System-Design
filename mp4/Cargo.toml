@@ -1,0 +1,33 @@
+[workspace]
+members = [
+	# rex lib
+	"rex",
+
+	# macros
+	"rex-macros",
+]
+
+resolver = "2"
+exclude = ["./samples/", "./rust/", "./tools/", "./scripts/"]
+
+[workspace.package]
+authors = ["Rex Contributors"]
+repository = "https://github.com/rosalab/inner_unikernels"
+edition = "2021"
+
+[workspace.dependencies]
+proc-macro-error = { version = "1.0", default-features = false }
+proc-macro2 = { version = "1", default-features = false }
+paste = { version = "1" }
+syn = { version = "2", features = ["full"] }
+quote = { version = "1" }
+rex-macros = { path = "./rex-macros" }
+
+[profile.dev]
+debug = 0
+panic = "abort"
+
+[profile.release]
+debug = 0
+panic = "abort"
+lto = true

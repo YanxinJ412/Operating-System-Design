@@ -1,0 +1,8 @@
+*/loader
+*/event-trigger
+*/src/linux
+*/src/stub.rs
+*/target
+*/.gdbinit
+*/.gdb_history
+*/syscall_tp

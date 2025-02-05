@@ -1,0 +1,50 @@
+[package]
+name = "rex"
+version = "0.2.0"
+build = "build.rs"
+autotests = false
+repository.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+test = false
+doctest = false
+
+[dependencies]
+paste = { workspace = true }
+rex-macros = { workspace = true }
+
+[rex]
+uheaders = [
+  "linux/bpf.h",
+  "linux/errno.h",
+  "linux/in.h",
+  "linux/perf_event.h",
+  "linux/pkt_cls.h",
+  "linux/ptrace.h",
+  "linux/seccomp.h",
+  "linux/unistd.h",
+]
+
+kheaders = [
+  "linux/filter.h",
+  "linux/gfp_types.h",
+  "linux/if_ether.h",
+  "linux/ip.h",
+  "linux/kcsan.h",
+  "linux/perf_event.h",
+  "linux/prandom.h",
+  "linux/sched.h",
+  "linux/seqlock.h",
+  "linux/skbuff.h",
+  "linux/tcp.h",
+  "linux/timekeeper_internal.h",
+  "linux/udp.h",
+  "net/xdp.h",
+]
+
+kconfigs = ["CONFIG_BPF_KPROBE_OVERRIDE", "CONFIG_KALLSYMS_ALL"]
